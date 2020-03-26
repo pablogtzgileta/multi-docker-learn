@@ -1,0 +1,25 @@
+sudo: required
+services:
+  - docker
+
+# Build images for tests
+before_install:
+  - docker build -t pablogtzgileta/react-rest -f ./client/Dockerfile.dev ./client
+
+# Run scripts to test images from before
+script:
+  - docker run -e CI=true pablogtzgileta/react-test npm test
+
+# If all scripts passed then build production images from each one
+after_success:
+  - docker build -t pablogtzgileta/multi-client ./client
+  - docker build -t pablogtzgileta/multi-nginx ./nginx
+  - docker build -t pablogtzgileta/multi-server ./server
+  - docker build -t pablogtzgileta/multi-worker ./worker
+  # Log in to docker CLI (env variables on travis project)
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take images and push them to docker hub
+  - docker push pablogtzgileta/multi-client
+  - docker push pablogtzgileta/multi-nginx
+  - docker push pablogtzgileta/multi-server
+  - docker push pablogtzgileta/multi-worker
