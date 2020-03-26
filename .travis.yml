@@ -4,7 +4,7 @@ services:
 
 # Build images for tests
 before_install:
-  - docker build -t pablogtzgileta/react-rest -f ./client/Dockerfile.dev ./client
+  - docker build -t pablogtzgileta/react-test -f ./client/Dockerfile.dev ./client
 
 # Run scripts to test images from before
 script:
